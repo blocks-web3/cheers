@@ -28,6 +28,9 @@
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "[yaml]": {
     "editor.insertSpaces": true,
     "editor.tabSize": 2,

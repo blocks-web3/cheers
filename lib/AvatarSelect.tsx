@@ -4,13 +4,13 @@ import {
   Button,
   FormControl,
   FormControlLabel,
-  FormLabel,
   Grid,
   Radio,
   RadioGroup,
 } from "@mui/material";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+import NftImage from "./NftImage";
 import { alchemy } from "./alchemy";
 
 type NftDigest = {
@@ -91,33 +91,34 @@ export default function AvatarSelect({
 
   return (
     <Box>
-      <Grid>
-        <FormLabel id="demo-radio-buttons-group-label">
-          Select item for avatar from your collection
-        </FormLabel>
-      </Grid>
+      <h2 className="text-slate-800 ">Select Character From Your Collection</h2>
       <Grid>
         {items ? (
           <form onSubmit={handleSubmit}>
-            <FormControl>
-              <RadioGroup name="radio-buttons-group" onChange={handleChange}>
-                {items.map((item, index) => {
-                  return (
-                    <Grid key={index} item xs={4}>
-                      <img src={item.image} alt="" height={120} width={120} />
-                      <FormControlLabel
-                        value={item.image}
-                        control={<Radio />}
-                        label={digestToken(item)}
-                      />
-                    </Grid>
-                  );
-                })}
-              </RadioGroup>
-              <Button variant="text" type="submit">
-                Convert
-              </Button>
-            </FormControl>
+            <div className="grid grid-cols-2 gap-1 p-2">
+              <FormControl>
+                <RadioGroup name="radio-buttons-group" onChange={handleChange}>
+                  {items.map((item, index) => {
+                    return (
+                      <Grid key={index}>
+                        <NftImage
+                          imageUrl={item.image}
+                          nftName={digestToken(item)}
+                        />
+                        <FormControlLabel
+                          value={item.image}
+                          control={<Radio />}
+                          label={digestToken(item)}
+                        />
+                      </Grid>
+                    );
+                  })}
+                </RadioGroup>
+                <Button variant="text" type="submit">
+                  Convert
+                </Button>
+              </FormControl>
+            </div>
           </form>
         ) : (
           <></>

@@ -26,6 +26,29 @@ const wagmiConfig = createConfig({
 });
 const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
+const nftData = [
+  {
+    imageUrl:
+      "https://as2.ftcdn.net/v2/jpg/06/02/64/67/1000_F_602646738_K6LugRq6VPbMWElfUQMnCqOZhcjQ2Own.jpg",
+    nftName: "charactor1",
+  },
+  {
+    imageUrl:
+      "https://as2.ftcdn.net/v2/jpg/05/81/56/49/1000_F_581564907_kC2mbPUqNtao3cgq1kTmGeyKWRU7ucQC.jpg",
+    nftName: "charactor2",
+  },
+  {
+    imageUrl:
+      "https://as2.ftcdn.net/v2/jpg/06/02/22/23/1000_F_602222303_STAOTzuTWzCzd6Vv9Gbrb20B26xK3Md5.jpg",
+    nftName: "charactor3",
+  },
+  {
+    imageUrl:
+      "https://i.seadn.io/gcs/files/2aceea15ce6011236c8297b5ae661233.png?auto=format&dpr=1&w=1000",
+    nftName: "charactor4",
+  },
+];
+
 export default function Home() {
   const [imgUrl, setImgUrl] = useState<string | undefined>(undefined);
   // const originUrl = "https://as2.ftcdn.net/v2/jpg/06/02/64/67/1000_F_602646738_K6LugRq6VPbMWElfUQMnCqOZhcjQ2Own.jpg";
@@ -52,10 +75,29 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="flex min-h-screen flex-col text text-center px-24 py-8">
       <WagmiConfig config={wagmiConfig}>
-        <Web3Button />
-        <AvatarSelect convertedImgUrl={imgUrl} onItemSelected={onClick} />
+        <section className="flex flex-row-reverse">
+          <Web3Button />
+        </section>
+        <section className="flex flex-col min-h-[50px] px-[80px] py-2">
+          <img src="logo.png"></img>
+          <Web3Button label="Connect To Start!!" />
+        </section>
+        <section className="bg-slate-100 p-2 rounded-xl bg-opacity-75">
+          <AvatarSelect convertedImgUrl={imgUrl} onItemSelected={onClick} />
+          {/* <div className="grid grid-cols-2 gap-1 p-2">
+            {nftData.map((data) => {
+              return (
+                <NftImage
+                  imageUrl={data.imageUrl}
+                  nftName={data.nftName}
+                ></NftImage>
+              );
+            })}
+          </div> */}
+        </section>
+
         {imgUrl ? (
           <>
             <ImagePixelated src={imgUrl} fillTransparencyColor={"white"} />
