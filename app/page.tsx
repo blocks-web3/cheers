@@ -2,6 +2,21 @@
 import axios from "axios";
 import { useState } from "react";
 import { ImagePixelated, ElementPixelated } from "react-pixelate";
+import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
+import { Web3Modal, Web3Button } from '@web3modal/react'
+import { configureChains, createConfig, WagmiConfig } from 'wagmi'
+import { mainnet, polygon } from 'wagmi/chains'
+
+const chains = [mainnet, polygon]
+const projectId = '95a4b5b36b00fe83481dda90ea3dd77c'
+
+const { publicClient } = configureChains(chains, [w3mProvider({ projectId })])
+const wagmiConfig = createConfig({
+  autoConnect: true,
+  connectors: w3mConnectors({ projectId, chains }),
+  publicClient
+})
+const ethereumClient = new EthereumClient(wagmiConfig, chains)
 
 export default function Home() {
   const [imgUrl, setImgUrl] = useState<string | undefined>(undefined);
@@ -32,16 +47,19 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <button onClick={onCllick}>convert</button>
-
-      {originUrl ? <img src={originUrl}></img> : ""}
-      {imgUrl ? (
-        <>
-          <ImagePixelated src={imgUrl} fillTransparencyColor={"white"} />
-        </>
-      ) : (
-        ""
-      )}
+      <WagmiConfig config={wagmiConfig}>
+        <Web3Button />
+        <button onClick={onCllick}>convert</button>
+        {originUrl ? <img src={originUrl}></img> : ""}
+        {imgUrl ? (
+          <>
+            <ImagePixelated src={imgUrl} fillTransparencyColor={"white"} />
+          </>
+          ) : (
+          ""
+        )}
+      </WagmiConfig>
+      <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
     </main>
   );
 }
