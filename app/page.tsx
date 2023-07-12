@@ -82,29 +82,23 @@ export default function Home() {
         </section>
         <section className="flex flex-col min-h-[50px] px-[80px] py-2">
           <img src="logo.png"></img>
-          <Web3Button label="Connect To Start!!" />
         </section>
         <section className="bg-slate-100 p-2 rounded-xl bg-opacity-75">
           <AvatarSelect convertedImgUrl={imgUrl} onItemSelected={onClick} />
-          {/* <div className="grid grid-cols-2 gap-1 p-2">
-            {nftData.map((data) => {
-              return (
-                <NftImage
-                  imageUrl={data.imageUrl}
-                  nftName={data.nftName}
-                ></NftImage>
-              );
-            })}
-          </div> */}
+          <div className="max-w-full">
+            {imgUrl ? (
+              <ImagePixelated
+                src={imgUrl}
+                fillTransparencyColor={"white"}
+                width={500}
+                height={500}
+                centered
+              />
+            ) : (
+              <></>
+            )}
+          </div>
         </section>
-
-        {imgUrl ? (
-          <>
-            <ImagePixelated src={imgUrl} fillTransparencyColor={"white"} />
-          </>
-        ) : (
-          ""
-        )}
       </WagmiConfig>
       <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
     </main>

@@ -1,14 +1,6 @@
 "use client";
-import {
-  Box,
-  Button,
-  FormControl,
-  FormControlLabel,
-  Grid,
-  Radio,
-  RadioGroup,
-} from "@mui/material";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { Web3Button } from "@web3modal/react";
+import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import NftImage from "./NftImage";
 import { alchemy } from "./alchemy";
@@ -27,7 +19,8 @@ const hasImage = (
 const digestToken = (item: NftDigest) => {
   const head = item.contractAddress.substring(0, 5);
   const tail = item.contractAddress.substring(38, 43);
-  return `${head}...${tail} #${item.tokenId}`;
+  const tokenId = item.tokenId.substring(0, 6);
+  return `${head}...${tail} #${tokenId}`;
 };
 
 type AvatarSelectProps = {
@@ -41,7 +34,6 @@ export default function AvatarSelect({
 }: AvatarSelectProps) {
   const { address, isConnected } = useAccount();
   const [items, setItems] = useState<NftDigest[]>([]);
-  const [originalImgUrl, setOriginalImgUrl] = useState<string>("");
 
   useEffect(() => {
     if (!address) return;
@@ -72,17 +64,8 @@ export default function AvatarSelect({
     getNfts();
   }, [address]);
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setOriginalImgUrl(event.target.value);
-  };
-
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    onItemSelected(originalImgUrl);
-  };
-
   if (!isConnected) {
-    return <>Connect Wallet First</>;
+    return <Web3Button label="Connect To Start!!" />;
   }
 
   if (convertedImgUrl) {
@@ -90,40 +73,24 @@ export default function AvatarSelect({
   }
 
   return (
-    <Box>
+    <>
       <h2 className="text-slate-800 ">Select Character From Your Collection</h2>
-      <Grid>
+      <div className="grid grid-cols-2 gap-1 p-2">
         {items ? (
-          <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-2 gap-1 p-2">
-              <FormControl>
-                <RadioGroup name="radio-buttons-group" onChange={handleChange}>
-                  {items.map((item, index) => {
-                    return (
-                      <Grid key={index}>
-                        <NftImage
-                          imageUrl={item.image}
-                          nftName={digestToken(item)}
-                        />
-                        <FormControlLabel
-                          value={item.image}
-                          control={<Radio />}
-                          label={digestToken(item)}
-                        />
-                      </Grid>
-                    );
-                  })}
-                </RadioGroup>
-                <Button variant="text" type="submit">
-                  Convert
-                </Button>
-              </FormControl>
-            </div>
-          </form>
+          items.map((item, index) => {
+            return (
+              <NftImage
+                imageUrl={item.image}
+                nftName={digestToken(item)}
+                key={index}
+                onClicked={onItemSelected}
+              />
+            );
+          })
         ) : (
           <></>
         )}
-      </Grid>
-    </Box>
+      </div>
+    </>
   );
 }
