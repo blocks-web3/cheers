@@ -76,7 +76,7 @@ async function convertUrl(imageUrl: string) {
     {
       responseType: "arraybuffer",
       headers: {
-        "X-Api-Key": "YvZXx6fH7zvrnsRgJyCAh7HR",
+        "X-Api-Key": process.env.NEXT_PUBLIC_IMAGE_APIKEY,
       },
     }
   );
