@@ -51,12 +51,15 @@ const nftData = [
 
 export default function Home() {
   const [imgUrl, setImgUrl] = useState<string | undefined>(undefined);
+  const [loading, setLoading] = useState<boolean>(false);
   // const originUrl = "https://as2.ftcdn.net/v2/jpg/06/02/64/67/1000_F_602646738_K6LugRq6VPbMWElfUQMnCqOZhcjQ2Own.jpg";
 
   async function onClick(originalImgUrl: string) {
     if (typeof window === "undefined") return;
 
     try {
+      setLoading(true);
+      setImgUrl("dummy");
       const img = await convertFromUrl(originalImgUrl);
       const file = new Blob([img], { type: "image/png" });
       setImgUrl(URL.createObjectURL(file));
@@ -71,6 +74,8 @@ export default function Home() {
         );
       }
       setImgUrl(originalImgUrl);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -87,13 +92,19 @@ export default function Home() {
           <AvatarSelect convertedImgUrl={imgUrl} onItemSelected={onClick} />
           <div className="max-w-full">
             {imgUrl ? (
-              <ImagePixelated
-                src={imgUrl}
-                fillTransparencyColor={"white"}
-                width={500}
-                height={500}
-                centered
-              />
+              loading ? (
+                <>Now Converting...</>
+              ) : (
+                <div>
+                  <ImagePixelated
+                    src={imgUrl}
+                    fillTransparencyColor={"white"}
+                    width={300}
+                    height={300}
+                    centered
+                  />
+                </div>
+              )
             ) : (
               <></>
             )}
