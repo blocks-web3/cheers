@@ -1,6 +1,7 @@
 "use client";
 import {
   Box,
+  Button,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -8,7 +9,7 @@ import {
   Radio,
   RadioGroup,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { alchemy } from "./alchemy";
 
@@ -29,17 +30,23 @@ const digestToken = (item: NftDigest) => {
   return `${head}...${tail} #${item.tokenId}`;
 };
 
-export default function AvatarSelect() {
+type AvatarSelectProps = {
+  convertedImgUrl: string | undefined;
+  onItemSelected: (originalImgUrl: string) => Promise<void>;
+};
+
+export default function AvatarSelect({
+  convertedImgUrl,
+  onItemSelected,
+}: AvatarSelectProps) {
   const { address, isConnected } = useAccount();
   const [items, setItems] = useState<NftDigest[]>([]);
+  const [originalImgUrl, setOriginalImgUrl] = useState<string>("");
 
   useEffect(() => {
     if (!address) return;
     const getNfts = async () => {
-      const contractAddresses = ["0x7409f5b06c370997b9eF7Ba263C6987bBCc1C6fF"];
-      const tokens = await alchemy.nft.getNftsForOwner(address, {
-        contractAddresses,
-      });
+      const tokens = await alchemy.nft.getNftsForOwner(address);
       const digests = await Promise.all(
         tokens.ownedNfts.map(async (each) => {
           const meta = await alchemy.nft.getNftMetadata(
@@ -65,8 +72,21 @@ export default function AvatarSelect() {
     getNfts();
   }, [address]);
 
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setOriginalImgUrl(event.target.value);
+  };
+
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    onItemSelected(originalImgUrl);
+  };
+
   if (!isConnected) {
     return <>Connect Wallet First</>;
+  }
+
+  if (convertedImgUrl) {
+    return <></>;
   }
 
   return (
@@ -77,26 +97,31 @@ export default function AvatarSelect() {
         </FormLabel>
       </Grid>
       <Grid>
-        <FormControl>
-          <RadioGroup name="radio-buttons-group">
-            {items ? (
-              items.map((item, index) => {
-                return (
-                  <Grid key={index} item xs={4}>
-                    <img src={item.image} alt="" height={120} width={120} />
-                    <FormControlLabel
-                      value={item.image}
-                      control={<Radio />}
-                      label={digestToken(item)}
-                    />
-                  </Grid>
-                );
-              })
-            ) : (
-              <></>
-            )}
-          </RadioGroup>
-        </FormControl>
+        {items ? (
+          <form onSubmit={handleSubmit}>
+            <FormControl>
+              <RadioGroup name="radio-buttons-group" onChange={handleChange}>
+                {items.map((item, index) => {
+                  return (
+                    <Grid key={index} item xs={4}>
+                      <img src={item.image} alt="" height={120} width={120} />
+                      <FormControlLabel
+                        value={item.image}
+                        control={<Radio />}
+                        label={digestToken(item)}
+                      />
+                    </Grid>
+                  );
+                })}
+              </RadioGroup>
+              <Button variant="text" type="submit">
+                Convert
+              </Button>
+            </FormControl>
+          </form>
+        ) : (
+          <></>
+        )}
       </Grid>
     </Box>
   );
