@@ -1,15 +1,8 @@
 "use client";
-import {
-  Box,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Grid,
-  Radio,
-  RadioGroup,
-} from "@mui/material";
+import { Web3Button } from "@web3modal/react";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+import NftImage from "./NftImage";
 import { alchemy } from "./alchemy";
 
 type NftDigest = {
@@ -26,20 +19,26 @@ const hasImage = (
 const digestToken = (item: NftDigest) => {
   const head = item.contractAddress.substring(0, 5);
   const tail = item.contractAddress.substring(38, 43);
-  return `${head}...${tail} #${item.tokenId}`;
+  const tokenId = item.tokenId.substring(0, 6);
+  return `${head}...${tail} #${tokenId}`;
 };
 
-export default function AvatarSelect() {
+type AvatarSelectProps = {
+  convertedImgUrl: string | undefined;
+  onItemSelected: (originalImgUrl: string) => Promise<void>;
+};
+
+export default function AvatarSelect({
+  convertedImgUrl,
+  onItemSelected,
+}: AvatarSelectProps) {
   const { address, isConnected } = useAccount();
   const [items, setItems] = useState<NftDigest[]>([]);
 
   useEffect(() => {
     if (!address) return;
     const getNfts = async () => {
-      const contractAddresses = ["0x7409f5b06c370997b9eF7Ba263C6987bBCc1C6fF"];
-      const tokens = await alchemy.nft.getNftsForOwner(address, {
-        contractAddresses,
-      });
+      const tokens = await alchemy.nft.getNftsForOwner(address);
       const digests = await Promise.all(
         tokens.ownedNfts.map(async (each) => {
           const meta = await alchemy.nft.getNftMetadata(
@@ -66,38 +65,32 @@ export default function AvatarSelect() {
   }, [address]);
 
   if (!isConnected) {
-    return <>Connect Wallet First</>;
+    return <Web3Button label="Connect To Start!!" />;
+  }
+
+  if (convertedImgUrl) {
+    return <></>;
   }
 
   return (
-    <Box>
-      <Grid>
-        <FormLabel id="demo-radio-buttons-group-label">
-          Select item for avatar from your collection
-        </FormLabel>
-      </Grid>
-      <Grid>
-        <FormControl>
-          <RadioGroup name="radio-buttons-group">
-            {items ? (
-              items.map((item, index) => {
-                return (
-                  <Grid key={index} item xs={4}>
-                    <img src={item.image} alt="" height={120} width={120} />
-                    <FormControlLabel
-                      value={item.image}
-                      control={<Radio />}
-                      label={digestToken(item)}
-                    />
-                  </Grid>
-                );
-              })
-            ) : (
-              <></>
-            )}
-          </RadioGroup>
-        </FormControl>
-      </Grid>
-    </Box>
+    <>
+      <h2 className="text-slate-800 ">Select Character From Your Collection</h2>
+      <div className="grid grid-cols-2 gap-1 p-2">
+        {items ? (
+          items.map((item, index) => {
+            return (
+              <NftImage
+                imageUrl={item.image}
+                nftName={digestToken(item)}
+                key={index}
+                onClicked={onItemSelected}
+              />
+            );
+          })
+        ) : (
+          <></>
+        )}
+      </div>
+    </>
   );
 }
