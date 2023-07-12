@@ -1,4 +1,4 @@
-import { Network, Alchemy } from "alchemy-sdk";
+import { Alchemy, Network } from "alchemy-sdk";
 
 const settings = {
   apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
