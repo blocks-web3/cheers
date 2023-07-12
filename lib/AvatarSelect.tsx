@@ -32,9 +32,6 @@ const digestToken = (item: NftDigest) => {
 export default function AvatarSelect() {
   const { address, isConnected } = useAccount();
   const [items, setItems] = useState<NftDigest[]>([]);
-  if (!isConnected) {
-    return <>Connect Wallet First</>;
-  }
 
   useEffect(() => {
     if (!address) return;
@@ -67,6 +64,10 @@ export default function AvatarSelect() {
     };
     getNfts();
   }, [address]);
+
+  if (!isConnected) {
+    return <>Connect Wallet First</>;
+  }
 
   return (
     <Box>
