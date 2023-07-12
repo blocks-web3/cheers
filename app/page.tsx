@@ -6,10 +6,14 @@ import {
 } from "@web3modal/ethereum";
 import { Web3Button, Web3Modal } from "@web3modal/react";
 import axios from "axios";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { ImagePixelated } from "react-pixelate";
 import { WagmiConfig, configureChains, createConfig } from "wagmi";
 import { mainnet, polygon } from "wagmi/chains";
+const AvatarSelect = dynamic(() => import("../lib/AvatarSelect"), {
+  ssr: false,
+});
 
 const chains = [mainnet, polygon];
 const projectId = "95a4b5b36b00fe83481dda90ea3dd77c";
@@ -61,6 +65,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <WagmiConfig config={wagmiConfig}>
         <Web3Button />
+        <AvatarSelect />
         <button onClick={onCllick}>convert</button>
         {originUrl ? <img src={originUrl}></img> : ""}
         {imgUrl ? (
