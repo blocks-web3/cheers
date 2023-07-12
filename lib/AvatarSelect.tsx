@@ -1,4 +1,6 @@
+"use client";
 import {
+  Box,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -22,13 +24,12 @@ const hasImage = (
 };
 
 const digestToken = (item: NftDigest) => {
-  return `${item.contractAddress.substring(
-    0,
-    5
-  )}...${item.contractAddress.substring(38, 43)} #${item.tokenId}`;
+  const head = item.contractAddress.substring(0, 5);
+  const tail = item.contractAddress.substring(38, 43);
+  return `${head}...${tail} #${item.tokenId}`;
 };
 
-export const AvatarSelect = () => {
+export default function AvatarSelect() {
   const { address, isConnected } = useAccount();
   const [items, setItems] = useState<NftDigest[]>([]);
   if (!isConnected) {
@@ -68,28 +69,34 @@ export const AvatarSelect = () => {
   }, [address]);
 
   return (
-    <div>
-      <FormControl>
+    <Box>
+      <Grid>
         <FormLabel id="demo-radio-buttons-group-label">
           Select item for avatar from your collection
         </FormLabel>
-        <RadioGroup name="radio-buttons-group">
-          <Grid>
-            {items.map((item, index) => {
-              return (
-                <Grid key={index} item xs={4}>
-                  <img src={item.image} alt="" height={120} width={120} />
-                  <FormControlLabel
-                    value={item.image}
-                    control={<Radio />}
-                    label={digestToken(item)}
-                  />
-                </Grid>
-              );
-            })}
-          </Grid>
-        </RadioGroup>
-      </FormControl>
-    </div>
+      </Grid>
+      <Grid>
+        <FormControl>
+          <RadioGroup name="radio-buttons-group">
+            {items ? (
+              items.map((item, index) => {
+                return (
+                  <Grid key={index} item xs={4}>
+                    <img src={item.image} alt="" height={120} width={120} />
+                    <FormControlLabel
+                      value={item.image}
+                      control={<Radio />}
+                      label={digestToken(item)}
+                    />
+                  </Grid>
+                );
+              })
+            ) : (
+              <></>
+            )}
+          </RadioGroup>
+        </FormControl>
+      </Grid>
+    </Box>
   );
-};
+}
