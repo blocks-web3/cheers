@@ -79,6 +79,10 @@ export default function Home() {
     }
   }
 
+  const selectAgain = () => {
+    setImgUrl(undefined);
+  };
+
   return (
     <main className="flex min-h-screen flex-col text text-center px-24 py-8">
       <WagmiConfig config={wagmiConfig}>
@@ -103,6 +107,15 @@ export default function Home() {
                     height={300}
                     centered
                   />
+                  <button className="bg-transparent hover:bg-blue-500 text-blue-500 hover:text-white hover:border-transparent py-2 px-4 border border-blue-500 m-2 rounded-full">
+                    入室する
+                  </button>
+                  <button
+                    className="bg-transparent hover:bg-red-500 text-red-500 hover:text-white hover:border-transparent py-2 px-4 border border-red-500 m-2 rounded-full"
+                    onClick={selectAgain}
+                  >
+                    選び直す
+                  </button>
                 </div>
               )
             ) : (
