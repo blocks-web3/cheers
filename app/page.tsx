@@ -73,7 +73,7 @@ export default function Home() {
           `画像が複雑なため、変換に失敗しました。他のNFTでお試しください。`
         );
       }
-      setImgUrl(originalImgUrl);
+      setImgUrl(undefined);
     } finally {
       setLoading(false);
     }
@@ -95,7 +95,7 @@ export default function Home() {
               loading ? (
                 <>Now Converting...</>
               ) : (
-                <div>
+                <div className="pixel">
                   <ImagePixelated
                     src={imgUrl}
                     fillTransparencyColor={"white"}
